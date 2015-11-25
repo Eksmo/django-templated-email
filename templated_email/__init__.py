@@ -1,7 +1,12 @@
 from django.conf import settings
-from importlib import import_module
 from django.core.exceptions import ImproperlyConfigured
 from templated_email.backends.vanilla_django import TemplateBackend
+
+try:
+    # importlib is removed in 1.9
+    from django.utils.importlib import import_module
+except ImportError:
+    from importlib import import_module
 
 
 def get_connection(backend=None, template_prefix=None, template_suffix=None,
