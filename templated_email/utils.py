@@ -8,7 +8,11 @@ class BlockNotFound(Exception):
     pass
 
 
+parents_cache = {}
+
+
 def _iter_nodes(template, context, name, block_lookups):
+    global parents_cache
     for node in template:
         if isinstance(node, BlockNode) and node.name == name:
             # Rudimentary handling of extended templates, for issue #3
@@ -20,7 +24,10 @@ def _iter_nodes(template, context, name, block_lookups):
         elif isinstance(node, ExtendsNode):
             lookups = dict([(n.name, n) for n in node.nodelist if isinstance(n, BlockNode)])
             lookups.update(block_lookups)
-            return _get_node(node.get_parent(context), context, name, lookups)
+            parent = parents_cache.get(template.name, None)
+            if not parent:
+                parent = parents_cache[template.name] = node.get_parent(context)
+            return _get_node(parent, context, name, lookups)  ###
 
     raise BlockNotFound("Node '%s' could not be found in template." % name)
 
