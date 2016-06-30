@@ -179,6 +179,7 @@ class TemplateBackend(object):
                                    file_extension=file_extension)
 
         e.connection = connection
+        e.template_name = template_name  # MyBook: for testing
 
         try:
             e.send(fail_silently)
